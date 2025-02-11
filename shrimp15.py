@@ -1,6 +1,6 @@
 
 
-#hello
+
 import tkinter.messagebox
 import turtle
 import tkinter
@@ -113,7 +113,6 @@ green_fish = r'C:\Users\aries\Desktop\codes\green_fish.gif'
 fish_g = turtle.Turtle()
 turtle.register_shape(green_fish)
 fish_g.shape(green_fish)
-#fish_g.shape("square")
 fish_g.color(team_g_colour)
 fish_g.pencolor("light green")
 fish_g.pensize(55)
