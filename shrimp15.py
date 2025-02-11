@@ -59,7 +59,7 @@ team_w_pencolour = "white"
 
 
 
-white_shark = r'C:\Users\aries\Desktop\codes\white_shark.gif'
+white_shark = './white_shark.gif'
 turtle.register_shape(white_shark)
 shark_w = turtle.Turtle()
 shark_w.shape(white_shark)
@@ -70,7 +70,7 @@ first_shark_w_y = random.randint(300, 600)
 shark_w.goto(first_shark_w_x, first_shark_w_y)
 
 
-white_fish = r'C:\Users\aries\Desktop\codes\white_fish.gif'
+white_fish = './white_fish.gif'
 turtle.register_shape(white_fish)
 fish_w = turtle.Turtle()
 fish_w.shape(white_fish)
@@ -82,7 +82,7 @@ first_fish_w_x = random.randint(0, 300)
 first_fish_w_y = random.randint(0, 600)
 fish_w.goto(first_fish_w_x, first_fish_w_y)
 
-white_shrimp = r'C:\Users\aries\Desktop\codes\white_shrimp.gif'
+white_shrimp = './white_shrimp.gif'
 turtle.register_shape(white_shrimp)
 shrimp_w = turtle.Turtle()
 shrimp_w.shape(white_shrimp)
@@ -97,7 +97,7 @@ shrimp_w.goto(50, 203)
 team_g_colour = "green"
 team_g_pencolour = "green"
 
-green_shark = r'C:\Users\aries\Desktop\codes\green_shark.gif'
+green_shark = './green_shark.gif'
 turtle.register_shape(green_shark)
 shark_g = turtle.Turtle()
 shark_g.shape(green_shark)
@@ -109,7 +109,7 @@ first_shark_g_x = random.randint(300, 600)
 first_shark_g_y = random.randint(300, 600)
 shark_g.goto(first_shark_g_x, first_shark_g_y)
 
-green_fish = r'C:\Users\aries\Desktop\codes\green_fish.gif'
+green_fish = './green_fish.gif'
 fish_g = turtle.Turtle()
 turtle.register_shape(green_fish)
 fish_g.shape(green_fish)
@@ -121,7 +121,7 @@ first_fish_g_x = random.randint(300, 600)
 first_fish_g_y = random.randint(0, 600)
 fish_g.goto(first_fish_g_x, first_fish_g_y)
 
-green_shrimp = r'C:\Users\aries\Desktop\codes\green_shrimp.gif'
+green_shrimp = './green_shrimp.gif'
 turtle.register_shape(green_shrimp)
 shrimp_g = turtle.Turtle()
 shrimp_g.shape(green_shrimp)
