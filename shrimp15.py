@@ -60,7 +60,9 @@ team_w_pencolour = "white"
 
 
 white_shark = './white_shark.gif'
+white_moving_shark = './white_moving_shark.gif'
 turtle.register_shape(white_shark)
+turtle.register_shape(white_moving_shark)
 shark_w = turtle.Turtle()
 shark_w.shape(white_shark)
 shark_w.pencolor(team_w_pencolour)
@@ -68,7 +70,6 @@ shark_w.penup()
 first_shark_w_x = random.randint(0, 300)
 first_shark_w_y = random.randint(300, 600)
 shark_w.goto(first_shark_w_x, first_shark_w_y)
-
 
 white_fish = './white_fish.gif'
 turtle.register_shape(white_fish)
@@ -386,6 +387,7 @@ def animal_settles(animal):
         for i in all_cells:
             if animal.xcor() > i[0,0] and animal.xcor() < i[1,0] and animal.xcor() < i[2,0] and animal.xcor() > i[3,0] and animal.ycor() < i[0,1] and animal.ycor() < i[1,1] and animal.ycor() > i[2,1] and animal.ycor() > i[3,1]:
                 animal.goto(((i[0,0]+i[1,0])/2, (i[1,1]+i[2,1])/2))
+                
                 cant_go_there(animal)
                 eaten(animal)
 
@@ -401,6 +403,7 @@ def move_up(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_down(animal):
     animal.setheading(270)
@@ -408,6 +411,7 @@ def move_down(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_left(animal):
     animal.setheading(180)
@@ -415,6 +419,7 @@ def move_left(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_left_up(animal):
     animal.setheading(135)
@@ -422,6 +427,7 @@ def move_left_up(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_left_down(animal):
     animal.setheading(225)
@@ -429,6 +435,7 @@ def move_left_down(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_right(animal):
     animal.setheading(0)
@@ -436,6 +443,7 @@ def move_right(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_right_up(animal):
     animal.setheading(45)
@@ -443,6 +451,7 @@ def move_right_up(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 def move_right_down(animal):
     animal.setheading(315)
@@ -450,6 +459,7 @@ def move_right_down(animal):
     animal_settles(animal)
     cant_go_there(animal)
     one_coloured_goto(animal)
+    next_go.set(1)
 
 
    
@@ -711,7 +721,6 @@ def the_button(animal):
 
     right_down_button = tkinter.Button(text="right_down", command= lambda: move_right_down(animal))
     right_down_button.place(x=725,y=73)
-    
 
 
 
@@ -769,7 +778,12 @@ def move():
         #order_reset()   
         for animal in order:
             order_reset()
+            if animal == shark_w:
+                shark_w.shape(white_moving_shark)
+            elif animal != shark_w:
+                shark_w.shape(white_shark)
             if animal not in skip:
+                
                 
                 the_button(animal)
                 cant_go_there(animal)
