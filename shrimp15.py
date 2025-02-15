@@ -767,6 +767,18 @@ def wins():
         else:
             print("Draw!")
             tkinter.messagebox.showinfo(title= "winner", message="It's a Draw!")
+
+w_s_m1 = './white_shark_move1.gif'
+w_s_m2 = './white_shark_move2.gif'
+turtle.register_shape(w_s_m1)
+turtle.register_shape(w_s_m2)
+
+
+
+
+
+
+
 order = [shark_w, shark_g, fish_w, fish_g, shrimp_w, shrimp_g]
 def move():
     
@@ -778,11 +790,14 @@ def move():
         #order_reset()   
         for animal in order:
             order_reset()
-            if animal == shark_w:
-                shark_w.shape(white_moving_shark)
-            elif animal != shark_w:
-                shark_w.shape(white_shark)
+            
             if animal not in skip:
+                if animal == shark_w:
+                    for i in range(30):
+                        shark_w.shape(w_s_m1)
+                        shark_w.shape(w_s_m2)
+                else:
+                    shark_w.shape(white_shark)
                 
                 
                 the_button(animal)
@@ -798,6 +813,7 @@ def move():
             just_bubbles(animal)
             
             wins()
+            
             
 
 
