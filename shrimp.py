@@ -6,6 +6,7 @@ import turtle
 import tkinter
 import math
 import random
+import numpy
 sea = turtle.Screen()
 sea.title("Sharks and Shrimps")
 sea.bgcolor("dark blue")
@@ -52,652 +53,345 @@ for i in range(1,6):
 
 grid.hideturtle()
 
+EMPTY = 0
+SHARK = 1
+FISH = 2
+SHRIMP = 3
+BUBBLES = 4
 
-speed = 100
-team_w_colour = "white"
-team_w_pencolour = "white"
+white_sea_grid = numpy.array([
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+])
+
+green_sea_grid = numpy.array([
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+])
+
+def grid_to_pixel(grid_n):
+    grid_n = grid_n * 100 + 50
+    return grid_n
+
+def first_pos(grid, enemy_grid):
+    x = random.randint(0, 5)
+    y = random.randint(0, 5)
+    while True:
+        if grid[x][y] == EMPTY:
+            x = random.randint(0, 5)
+            y = random.randint(0, 5)
+        if enemy_grid[x][y] == EMPTY:
+            x = random.randint(0, 5)
+            y = random.randint(0, 5)
+        return (x, y)
+
+def grid_to_pixel_vector(position):
+    return (grid_to_pixel(position[0])), grid_to_pixel(position[1])
 
 
 
-white_shark = r'C:/Users/aries/Desktop/codes/white_shark.gif'
-white_moving_shark = './white_moving_shark.gif'
+
+
+white_shark = './white_shark.gif'
 turtle.register_shape(white_shark)
-turtle.register_shape(white_moving_shark)
-shark_w = turtle.Turtle()
-shark_w.shape(white_shark)
-shark_w.pencolor(team_w_pencolour)
-shark_w.penup()
-first_shark_w_x = random.randint(0, 300)
-first_shark_w_y = random.randint(300, 600)
-shark_w.goto(first_shark_w_x, first_shark_w_y)
 
 white_fish = './white_fish.gif'
 turtle.register_shape(white_fish)
-fish_w = turtle.Turtle()
-fish_w.shape(white_fish)
-fish_w.color(team_w_colour)
-fish_w.pencolor("turquoise")
-fish_w.pensize(35)
-fish_w.penup()
-first_fish_w_x = random.randint(0, 300)
-first_fish_w_y = random.randint(0, 600)
-fish_w.goto(first_fish_w_x, first_fish_w_y)
 
 white_shrimp = './white_shrimp.gif'
 turtle.register_shape(white_shrimp)
-shrimp_w = turtle.Turtle()
-shrimp_w.shape(white_shrimp)
-shrimp_w.color(team_w_colour)
-shrimp_w.pencolor("turquoise")
-shrimp_w.pensize(35)
-shrimp_w.penup()
-first_shark_w_x = random.randint(0, 300)
-first_shark_w_y = random.randint(0, 300)
-shrimp_w.goto(50, 203)
-
-team_g_colour = "green"
-team_g_pencolour = "green"
 
 green_shark = './green_shark.gif'
 turtle.register_shape(green_shark)
-shark_g = turtle.Turtle()
-shark_g.shape(green_shark)
-shark_g.color(team_g_colour)
-shark_g.pencolor(team_g_pencolour)
-shark_g.pensize(55)
-shark_g.penup()
-first_shark_g_x = random.randint(300, 600)
-first_shark_g_y = random.randint(300, 600)
-shark_g.goto(first_shark_g_x, first_shark_g_y)
 
 green_fish = './green_fish.gif'
-fish_g = turtle.Turtle()
+
 turtle.register_shape(green_fish)
-fish_g.shape(green_fish)
-fish_g.color(team_g_colour)
-fish_g.pencolor("light green")
-fish_g.pensize(55)
-fish_g.penup()
-first_fish_g_x = random.randint(300, 600)
-first_fish_g_y = random.randint(0, 600)
-fish_g.goto(first_fish_g_x, first_fish_g_y)
 
 green_shrimp = './green_shrimp.gif'
 turtle.register_shape(green_shrimp)
-shrimp_g = turtle.Turtle()
-shrimp_g.shape(green_shrimp)
-shrimp_g.color(team_g_colour)
-shrimp_g.pensize(55)
-shrimp_g.pencolor("light green")
-shrimp_g.penup()
-first_shrimp_g_x = random.randint(300, 600)
-first_shrimp_g_y = random.randint(0, 300)
-shrimp_g.goto(first_shrimp_g_x, first_shrimp_g_y)
-
-animals_positions_w = []
-animals_positions_g = []
 
 
 
 
-fill = turtle.Turtle()
-fill_pos = []
+TEAM_W = 0
+TEAM_G = 1
 
+all_y = []
+all_x = []
 
-def one_coloured_goto(animal):
-        fill.hideturtle()
-        fill.penup()
-        fill.speed(500)
-        
-        if animal == shark_w and len(shark_w_pos) > 1 and shark_w_pos[-2] not in fill_pos:
-            fill.goto(shark_w_pos[-2])
-        elif animal == fish_w and len(fish_w_pos) > 1 and fish_w_pos[-2] not in fill_pos:
-            fill.goto(fish_w_pos[-2])
-        elif animal == shrimp_w and len(shrimp_w_pos) > 1 and shrimp_w_pos[-2] not in fill_pos:
-            fill.goto(shrimp_w_pos[-2])
-        fill.penup()
-        fill.speed(500)
-        if animal == shark_g and len(shark_g_pos) > 1 and shark_g_pos[-2] not in fill_pos:
-            fill.goto(shark_g_pos[-2])
-        if animal == fish_g and len(fish_g_pos) > 1 and fish_g_pos[-2] not in fill_pos:
-            fill.goto(fish_g_pos[-2])
-        if animal == shrimp_g and len(shrimp_g_pos) > 1 and shrimp_g_pos[-2] not in fill_pos:
-            fill.goto(shrimp_g_pos[-2])
+shark_w_x = []
+fish_w_x = []
+shrimp_w_x = []
+shark_g_x = []
+fish_g_x = []
+shrimp_g_x = []
 
-        if animal in trapped_animals:
-            fill.goto(trappened_pos[-1])
-            
-        
-
-def one_fill_bubbles_w(animal):
-    fill.hideturtle()
-    fill.setheading(135)
-    fill.forward(5)
-    fill.pensize(5)
-    fill.pencolor(team_w_pencolour)
-    fill.pendown()
-    fill.circle(3)
-    fill.penup()
-    fill.setheading(150)
-    fill.forward(15)
-    fill.pendown()
-    fill.circle(10)
-    fill.penup()
-    fill.setheading(90)
-    fill.forward(20)
-    fill.pendown()
-    fill.circle(15)
-
-def one_fill_bubbles_g(animal):
-    fill.hideturtle()
-    fill.setheading(270)
-    fill.forward(40)
-    fill.pensize(5)
-    fill.pencolor(team_g_pencolour)
-    fill.pendown()
-    fill.circle(3)
-    fill.penup()
-    fill.setheading(15)
-    fill.forward(20)
-    fill.pendown()
-    fill.circle(10)
-    fill.penup()
-    fill.setheading(65)
-    fill.forward(40)
-    fill.pendown()
-    fill.circle(15)
-
-
-
-import numpy
-
-cell1 = [[0,100],[100,100],[100,0],[0,0]]
-first_cells_of_rows = []
-all_cells = []
-all_cells.append(numpy.array(cell1))
-
-def cell_up():
-    first_cell = [[0,100],[100,100],[100,0],[0,0]]
-    first_cells_of_rows.append(numpy.array(first_cell))
-    for n in range(5):
-        for i in first_cell:
-            i[1]+=100
-        first_cells_of_rows.append(numpy.array(first_cell))
-        all_cells.append(numpy.array(first_cell))
-
-cell_up()
-
-def next_cell(first_cell):
-    for n in range(5):
-        for i in first_cell:
-            i[0]+=100
-        all_cells.append(numpy.array(first_cell))
-
-next_cell(first_cells_of_rows[0])
-next_cell(first_cells_of_rows[1])
-next_cell(first_cells_of_rows[2])
-next_cell(first_cells_of_rows[3])
-next_cell(first_cells_of_rows[4])
-next_cell(first_cells_of_rows[5])
-
-
-
-
-
-
-
-skip = []
-skip_w = []
-skip_g = []
-
-def shrimp_w_tickles_shark_g():
-    if shrimp_w.pos() == shark_g.pos():
-        print("Shrimp tickles the Shark!")
-        shark_g.hideturtle()
-        skip.append(shark_g)
-        skip_g.append(shark_g)
-        if shark_g in team_g:
-            team_g.remove(shark_g)
-        animals_positions_g.append(shark_g.pos())
-        #if shrimp_w_pos[-1] == animals_positions_w[-1] or shark_g_pos[-1] == animals_positions_g[-1]:
-        #    tkinter.messagebox.showinfo(title= "shark is gone", message="Shrimp tickled Shark!")
-        
-
-
-def shark_w_eats_fish_g():
-    if fish_g.pos() == shark_w.pos():
-        print("Shark eats Fish!")
-        fish_g.hideturtle()
-        skip.append(fish_g)
-        skip_g.append(fish_g)
-        if fish_g in team_g:
-            team_g.remove(fish_g)
-        animals_positions_g.append(fish_g.pos())
-        #order_reset()
-        
-
-def fish_w_eats_shrimp_g():
-    if fish_w.pos() == shrimp_g.pos():
-        print("Fish eats Srimp!")
-        shrimp_g.hideturtle()
-        skip.append(shrimp_g)
-        skip_g.append(shrimp_g)
-        if shrimp_g in team_g:
-            team_g.remove(shrimp_g)
-        animals_positions_g.append(shrimp_g.pos())
-        #order_reset()
-
-
-def shrimp_g_tickles_shark_w():
-    if shrimp_g.pos() == shark_w.pos():
-        print("Shrimp tickles the Shark!")
-        shark_w.hideturtle()
-        skip.append(shark_w)
-        skip_w.append(shark_w)
-        if shark_w in team_w:
-            team_w.remove(shark_w)
-        animals_positions_w.append(shark_w.pos())
-        #order_reset()
-
-def shark_g_eats_fish_w():
-    if fish_w.pos() == shark_g.pos():
-        print("Shark eats Fish!")
-        fish_w.hideturtle()
-        skip.append(fish_w)
-        skip_w.append(fish_w)
-        if fish_w in team_w:
-            team_w.remove(fish_w)
-        animals_positions_w.append(fish_w.pos())
-        #order_reset()
-
-def fish_g_eats_shrimp_w():
-    if fish_g.pos() == shrimp_w.pos():
-        print("Fish eats Srimp!")
-        shrimp_w.hideturtle()
-        skip.append(shrimp_w)
-        skip_w.append(shrimp_w)
-        if shrimp_w in team_w:
-            team_w.remove(shrimp_w)
-        animals_positions_w.append(shrimp_w.pos())
-
-def eaten(animal):
-                if shark_w.pos() == fish_g.pos():
-                    shark_w_eats_fish_g()
-                    order_reset()
-                    if animal == shark_w:
-                        fill.penup()
-                        fill.goto(fish_g_pos[-1])
-                        just_bubbles(fish_g)
-                    elif animal == fish_g:
-                        one_coloured_goto(fish_g)
-                        just_bubbles(fish_g)
-                elif fish_w.pos() == shrimp_g.pos():
-                    fish_w_eats_shrimp_g()
-                    order_reset()
-                    if animal == fish_w:
-                        fill.penup()
-                        fill.goto(shrimp_g_pos[-1])
-                        just_bubbles(shrimp_g)
-                    elif animal == shrimp_g:
-                        one_coloured_goto(shrimp_g)
-                        just_bubbles(shrimp_g)
-                elif shrimp_w.pos() == shark_g.pos():
-                    shrimp_w_tickles_shark_g()
-                    order_reset()
-                    if animal == shrimp_w:
-                        fill.penup()
-                        fill.goto(shark_g_pos[-1])
-                        just_bubbles(shark_g)
-                    elif animal == shark_g:
-                        one_coloured_goto(shark_g)
-                        just_bubbles(shark_g)
-                elif shark_g.pos() == fish_w.pos():
-                    shark_g_eats_fish_w()
-                    order_reset()
-                    if animal == shark_g:
-                        fill.penup()
-                        fill.goto(fish_w_pos[-1])
-                        just_bubbles(fish_w)
-                    elif animal == fish_w:
-                        one_coloured_goto(fish_w)
-                        just_bubbles(fish_w)
-                elif fish_g.pos() == shrimp_w.pos():
-                    fish_g_eats_shrimp_w()
-                    order_reset()
-                    if animal == fish_g:
-                        fill.penup()
-                        fill.goto(shrimp_w_pos[-1])
-                        just_bubbles(shrimp_w)
-                    elif animal == shrimp_w:
-                        one_coloured_goto(shrimp_w)
-                        just_bubbles(shrimp_w)
-                elif shrimp_g.pos() == shark_w.pos():
-                    shrimp_g_tickles_shark_w()
-                    order_reset()
-                    if animal == shrimp_g:
-                        fill.penup()
-                        fill.goto(shark_w_pos[-1])
-                        just_bubbles(shark_w)
-                    elif animal == shark_w:
-                        one_coloured_goto(shark_w)
-                        just_bubbles(shark_w)
-
-def animal_settles(animal):
-    if animal not in skip:
-        for i in all_cells:
-            if animal.xcor() > i[0,0] and animal.xcor() < i[1,0] and animal.xcor() < i[2,0] and animal.xcor() > i[3,0] and animal.ycor() < i[0,1] and animal.ycor() < i[1,1] and animal.ycor() > i[2,1] and animal.ycor() > i[3,1]:
-                animal.goto(((i[0,0]+i[1,0])/2, (i[1,1]+i[2,1])/2))
-                
-                cant_go_there(animal)
-                eaten(animal)
-
-
-
-
-
-
-
-def move_up(animal):
-    animal.setheading(90)
-    animal.forward(100)
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_down(animal):
-    animal.setheading(270)
-    animal.forward(100)
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_left(animal):
-    animal.setheading(180)
-    animal.forward(100)
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_left_up(animal):
-    animal.setheading(135)
-    animal.forward((math.sqrt(2)*100))
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_left_down(animal):
-    animal.setheading(225)
-    animal.forward((math.sqrt(2)*100))
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_right(animal):
-    animal.setheading(0)
-    animal.forward(100)
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_right_up(animal):
-    animal.setheading(45)
-    animal.forward((math.sqrt(2)*100))
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-def move_right_down(animal):
-    animal.setheading(315)
-    animal.forward((math.sqrt(2)*100))
-    animal_settles(animal)
-    cant_go_there(animal)
-    one_coloured_goto(animal)
-    next_go.set(1)
-
-
-   
-
-team_w = [shark_w, fish_w, shrimp_w]
-team_g = [shark_g, fish_g, shrimp_g]
-shark_w_pos = []
-fish_w_pos = []
-shrimp_w_pos = []
-shark_g_pos = []
-fish_g_pos = []
-shrimp_g_pos = []
-order = []
-def order_reset():
-
-            order.clear()
-            if len(team_w) == 1 and len(team_g) == 1:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-            elif len(team_w) == 1 and len(team_g) == 2:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[0])
-                order.insert(3, team_g[1])
-            elif len(team_w) == 1 and len(team_g) == 3:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[0])
-                order.insert(3, team_g[1])
-                order.insert(4, team_w[0])
-                order.insert(5, team_g[2])
-            elif len(team_w) == 2 and len(team_g) == 1:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[0])
-            elif len(team_w) == 2 and len(team_g) == 2:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[1])
-            elif len(team_w) == 2 and len(team_g) == 3:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[1])
-                order.insert(4, team_w[1])
-                order.insert(5, team_g[2])
-            elif len(team_w) == 3 and len(team_g) == 1:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[0])
-                order.insert(4, team_w[2])
-                order.insert(5, team_g[0])
-            elif len(team_w) == 3 and len(team_g) == 2:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[1])
-                order.insert(4, team_w[2])
-                order.insert(5, team_g[1])
-            elif len(team_w) == 3 and len(team_g) == 3:
-                order.insert(0, team_w[0])
-                order.insert(1, team_g[0])
-                order.insert(2, team_w[1])
-                order.insert(3, team_g[1])
-                order.insert(4, team_w[2])
-                order.insert(5, team_g[2])
-            elif len(team_w) == 0 and len(team_g) == 1:
-                order.insert(0, team_g[0])
-            elif len(team_g) == 0 and len(team_w) == 1:
-                order.insert(0, team_w[0])
-            elif len(team_w) == 0 and len(team_g) == 2:
-                order.insert(0, team_g[0])
-                order.insert(0, team_g[1])
-            elif len(team_g) == 0 and len(team_w) == 2:
-                order.insert(0, team_w[0])
-                order.insert(0, team_w[1])
-            elif len(team_w) == 0 and len(team_g) == 3:
-                order.insert(0, team_g[0])
-                order.insert(0, team_g[1])
-                order.insert(0, team_g[2])
-            elif len(team_g) == 0 and len(team_w) == 3:
-                order.insert(0, team_w[0])
-                order.insert(0, team_w[1])
-                order.insert(0, team_w[2])
-
-
-
-
-def cant_go_there(animal):
-    borders(animal)
-    print(animals_positions_w)
-    if animal in team_w and animal.pos() in animals_positions_w:
-        if animal == shark_w and animal.pos() != shark_w_pos[-1]:
-            animal.goto(shark_w_pos[-1])
-        if animal == fish_w and animal.pos() != fish_w_pos[-1]:
-            animal.goto(fish_w_pos[-1])
-        if animal == shrimp_w and animal.pos() != shrimp_w_pos[-1]:
-            animal.goto(shrimp_w_pos[-1])
-    elif animal in team_w and animal.pos() not in animals_positions_w:
-        animals_positions_w.append(animal.pos())
-        if animal == shark_w:
-            shark_w_pos.append(animal.pos())
-        if animal == fish_w:
-            fish_w_pos.append(animal.pos())
-        if animal == shrimp_w:
-            shrimp_w_pos.append(animal.pos())
-        
-        print(animals_positions_w)
-    print(animals_positions_g)
-    if animal in team_g and animal.pos() in animals_positions_g:
-        if animal == shark_g and animal.pos() != shark_g_pos[-1]:
-            animal.goto(shark_g_pos[-1])
-        if animal == fish_g and animal.pos() != fish_g_pos[-1]:
-            animal.goto(fish_g_pos[-1])
-        if animal == shrimp_g and animal.pos() != shrimp_g_pos[-1]:
-            animal.goto(shrimp_g_pos[-1])
-    elif animal in team_g and animal.pos() not in animals_positions_g:
-        animals_positions_g.append(animal.pos())
-        if animal == shark_g:
-            shark_g_pos.append(animal.pos())
-        if animal == fish_g:
-            fish_g_pos.append(animal.pos())
-        if animal == shrimp_g:
-            shrimp_g_pos.append(animal.pos())
-
-        print(animals_positions_g)
-
-trapped_animals = []
-trappened_pos = []
-def trapped(animal):
-    def is_trapped(animal):
-        trappened_pos.append(animal.pos())
-        trapped_animals.append(animal)
-        skip.append(animal)
-        if animal in team_w:    
-            team_w.remove(animal)
-            animal.hideturtle()
-            fill.penup()
-            fill.speed(500)
-            fill.goto(trappened_pos[-1])
-            one_fill_bubbles_w(animal)
-        if animal in team_g:
-            team_g.remove(animal)
-            animal.hideturtle()
-            fill.penup()
-            fill.speed(500)
-            fill.goto(trappened_pos[-1])
-            one_fill_bubbles_g(animal)
-        
-        
-
-            
-        
-    trapped = tkinter.Button(text="trapped", command= lambda: is_trapped(animal))
-    trapped.place(x=100, y=75)
-    
-
-
+shark_w_y = []
+fish_w_y = []
+shrimp_w_y = []
+shark_g_y = []
+fish_g_y = []
+shrimp_g_y = []
 
 escaped = []
 escaped_w = []
 escaped_g = []
 
-def borders(animal):
-    if animal.xcor() < 0 or animal.xcor() > 600 or animal.ycor() < 0 or animal.ycor() > 600:
-        if animal == shark_w:
-            if fish_g in skip:
-                escaped.append(shark_w)
-                escaped_w.append(shark_w)
-                skip_w.append(shark_w)
-                skip.append(shark_w)
-                team_w.remove(shark_w)
-                shark_w_pos.append(shark_w.pos())
-            else:
-                shark_w.goto(shark_w_pos[-1])
-        if animal == fish_w:
-            if shrimp_g in skip:
-                escaped.append(fish_w)
-                escaped_w.append(fish_w)
-                skip_w.append(fish_w)
-                skip.append(fish_w)
-                team_w.remove(fish_w)
-                fish_w_pos.append(fish_w.pos())
-            else:
-                fish_w.goto(fish_w_pos[-1])
-        if animal == shrimp_w:
-            if shark_g in skip:
-                escaped.append(shrimp_w)
-                escaped_w.append(shrimp_w)
-                skip_w.append(shrimp_w)
-                skip.append(shrimp_w)
-                team_w.remove(shrimp_w)
-                shrimp_w_pos.append(shrimp_w.pos())
-            else:
-                shrimp_w.goto(shrimp_w_pos[-1])
-        
-        if animal == shark_g:
-            if fish_w in skip:
-                escaped.append(shark_g)
-                escaped_g.append(shark_g)
-                skip_g.append(shark_g)
-                skip.append(shark_g)
-                team_g.remove(shark_g)
-                shark_g_pos.append(shark_g.pos())
-            else:
-                shark_g.goto(shark_g_pos[-1])
-        if animal == fish_g:
-            if shrimp_w in skip:
-                escaped.append(fish_g)
-                escaped_g.append(fish_g)
-                skip_g.append(fish_g)
-                skip.append(fish_g)
-                team_g.remove(fish_g)
-                fish_g_pos.append(fish_g.pos())
-            else:
-                fish_g.goto(fish_g_pos[-1])
-        if animal == shrimp_g:
-            if shark_w in skip:
-                escaped.append(shrimp_g)
-                escaped_g.append(shrimp_g)
-                skip_g.append(shrimp_g)
-                skip.append(shrimp_g)
-                team_g.remove(shrimp_g)
-                shrimp_g_pos.append(shrimp_g.pos())
-            else:
-                shrimp_g.goto(shrimp_g_pos[-1])
-    
+class Animal:
+    def __init__(self, team, animal, grid, x, y, image):
+        self.team = team
+        self.animal_type = animal
+        self.grid = grid
+        self.x = x
+        self.y = y
+        self.turtle = turtle.Turtle()
+        self.position = self.set_position(first_pos(white_sea_grid, green_sea_grid))
+        self.turtle.shape(image)
+
+    def __str__(self):
+        return "Animal Type -> {} \nPosition - > {}".format(self.animal_type, self.position)
+
+    def set_position(self, position):
+        if hasattr(self, "position"):
+            self.grid[self.position[0]][self.position[1]] = BUBBLES
+        self.grid[position[0]][position[1]] = self.animal_type
+        self.position = position
+        self.turtle.penup()
+        self.turtle.goto(grid_to_pixel_vector(self.position))
+        self.x.append(position[0])
+        self.y.append(position[1])
 
         
+
+
+    
+shark_w = Animal(TEAM_W, SHARK, white_sea_grid, shark_w_x, shark_w_y, white_shark)
+fish_w = Animal(TEAM_W, FISH, white_sea_grid, fish_w_x, fish_w_y, white_fish)
+shrimp_w = Animal(TEAM_W, SHRIMP, white_sea_grid, shrimp_w_x, shrimp_w_y, white_shrimp)
+shark_g = Animal(TEAM_G, SHARK, green_sea_grid, shark_g_x, shark_g_y, green_shark)
+fish_g = Animal(TEAM_G, FISH, green_sea_grid, fish_g_x, fish_g_y, green_fish)
+shrimp_g = Animal(TEAM_G, SHRIMP, green_sea_grid, shrimp_g_x, shrimp_g_y, green_shrimp)
+
+
+
+def print_grid(team):
+    if team == TEAM_W:
+        print(numpy.flip(numpy.transpose(white_sea_grid), 0))
+    elif team == TEAM_G:
+        print(numpy.flip(numpy.transpose(green_sea_grid), 0))
+    
+
+def the_move(animal, x, y):
+    if x < 6 and y < 6 and x >= 0 and y >= 0 and animal.grid[x][y] == EMPTY:
+        animal.turtle.goto(grid_to_pixel(x), grid_to_pixel(y))
+        animal.grid[x][y] = animal.animal_type
+        bubbles(animal)
+        animal.x.append(x)
+        animal.y.append(y)
+        bubbles_draw(animal)
+        print_grid(animal.team)
+        next_go.set(1) 
+
+def movement(animal, x, y):
+    if animal not in allowed_to_escape:
+        the_move(animal, x, y)
+    if animal in allowed_to_escape:
+        if x > 5 or y > 5 or x < 0 or y < 0:
+            animal.turtle.goto(grid_to_pixel(x), grid_to_pixel(y))
+            escaped.append(animal)
+            skip.append(animal)
+            if animal in list_of_animals:
+                list_of_animals.remove(animal)
+            if animal in team_w:
+                escaped_w.append(animal)
+                team_w.remove(animal)
+            elif animal in team_g:
+                escaped_g.append(animal)
+                team_g.remove(animal)
+            next_go.set(1)
+        else:
+            the_move(animal, x, y)
+        
+def trapped_animal_trapped(animal):
+    if grid_to_pixel(animal.y[-1] + 1) > 600 or animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
+        if grid_to_pixel(animal.y[-1] - 1) < 0 or animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
+
+            if grid_to_pixel(animal.x[-1] - 1) < 0 or animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
+
+                if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] + 1) > 600) or animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
+
+                    if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] - 1) < 0) or animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
+
+                        if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] + 1) > 600) or animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
+
+                            if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] - 1) < 0) or animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
+                                is_trapped(animal)
+
+def trapped_animal_grid(animal):
+    if x < 6 and y < 6 and x >= 0 and y >= 0:
+        if animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
+            if animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
+
+                if animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
+
+                    if animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
+
+                        if animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
+
+                            if animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
+
+                                if animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
+                                    is_trapped(animal)
+
+def trapped_animal_pixel(animal):
+    if animal.x[-1] +1 < 6 and animal.y[-1] +1 < 6 and animal.x[-1]-1 >= 0 and animal.y[-1]-1 >= 0:
+        if animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
+            if animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
+
+                if animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
+
+                    if animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
+
+                        if animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
+
+                            if animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
+
+                                if animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
+                                    is_trapped(animal)
+    else:
+        if grid_to_pixel(animal.y[-1] + 1) > 600:
+            if grid_to_pixel(animal.y[-1] - 1) < 0:
+
+                if grid_to_pixel(animal.x[-1] - 1) < 0:
+
+                    if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] + 1) > 600):
+
+                        if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] - 1) < 0):
+
+                            if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] + 1) > 600):
+
+                                if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] - 1) < 0):
+                                    is_trapped(animal)
+
+def edges_and_bubbles(animal):
+    def no_up(animal):
+        if grid_to_pixel(animal.y[-1] + 1) > 600:
+            return True
+    def no_down(animal):
+        if grid_to_pixel(animal.y[-1] - 1) < 0:
+            return True
+    def no_left(animal):
+        if grid_to_pixel(animal.x[-1] - 1) < 0:
+            return True
+    def no_right(animal):
+        if grid_to_pixel(animal.x[-1] + 1) > 600:
+           return True
+    def no_up_bubbles(animal):
+        if animal.y[-1] + 1 < 6:
+            if animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
+                return True
+    def no_down_bubbles(animal):
+        if animal.y[-1] - 1 >=0:        
+            if animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
+                return True
+    def no_left_bubbles(animal):  
+        if animal.x[-1] - 1 >=0:      
+            if animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
+                return True
+    def no_left_up_bubbles(animal):   
+        if animal.x[-1] - 1 >=0 and animal.y[-1] + 1 < 6:         
+            if animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
+                return True
+    def no_left_down_bubbles(animal): 
+        if animal.x[-1] - 1 >=0 and animal.y[-1] - 1 >=0:               
+            if animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
+                return True
+    def no_right_bubbles(animal):
+        if animal.x[-1] + 1 < 6:
+            if animal.grid[animal.x[-1] + 1][animal.y[-1]] !=EMPTY:
+                return True
+    def no_right_up_bubbles(animal):     
+        if animal.x[-1] + 1 < 6 and animal.y[-1] + 1 < 6:               
+            if animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
+                return True
+    def no_right_down_bubbles(animal): 
+        if animal.x[-1] + 1 < 6 and animal.y[-1] - 1 <=0:                       
+            if animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
+                return True
+            
+    if no_left(animal) and no_up(animal) and no_down_bubbles(animal) and no_right_down_bubbles(animal) and no_right_bubbles(animal):
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_right(animal) and no_up(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal) and no_left_bubbles(animal):
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_left(animal) and no_down(animal) and no_up_bubbles(animal) and no_right_up_bubbles(animal) and no_right_bubbles(animal):
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_right(animal) and no_down(animal) and no_up_bubbles(animal) and no_left_up_bubbles(animal) and no_left_bubbles(animal):
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_up(animal) and no_left_bubbles(animal) and no_right_bubbles(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal) and no_right_down_bubbles:
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_left(animal) and no_up_bubbles(animal) and no_down_bubbles(animal) and no_right_bubbles(animal) and no_left_up_bubbles(animal) and no_right_down_bubbles:
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_right(animal) and no_up_bubbles(animal) and no_down_bubbles(animal) and no_left_bubbles(animal) and no_left_up_bubbles(animal) and no_left_down_bubbles:
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_down(animal) and no_up_bubbles(animal) and no_right_bubbles(animal) and no_left_bubbles(animal)and no_left_up_bubbles and no_right_up_bubbles:
+        is_trapped(animal)
+        next_go.set(1)
+    elif no_left_bubbles(animal) and no_left_up_bubbles(animal) and no_up_bubbles(animal) and no_right_up_bubbles(animal) and no_right_bubbles(animal) and no_right_down_bubbles(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal):
+        is_trapped(animal)
+        next_go.set(1)
+
+
+
+
+def move_up(animal):
+    movement(animal, (animal.x[-1]), (animal.y[-1] + 1))
+
+def move_down(animal):
+    movement(animal, (animal.x[-1]), (animal.y[-1] - 1))
+
+def move_left(animal):
+    movement(animal, (animal.x[-1] - 1), (animal.y[-1]))
+    
+def move_left_up(animal):
+    movement(animal, (animal.x[-1] - 1), (animal.y[-1] + 1))
+    
+def move_left_down(animal):
+    movement(animal, (animal.x[-1] - 1), (animal.y[-1] - 1))
+    
+def move_right(animal):
+    movement(animal, (animal.x[-1] + 1), (animal.y[-1]))
+    
+def move_right_up(animal):
+    movement(animal, (animal.x[-1] + 1), (animal.y[-1] + 1))
+    
+def move_right_down(animal):
+    movement(animal, (animal.x[-1] + 1), (animal.y[-1] - 1))
+
+def bubbles(animal):
+    animal.grid[animal.x[-1]][animal.y[-1]] = BUBBLES
+
+
+team_w = [shark_w, fish_w, shrimp_w]
+team_g = [shark_g, fish_g, shrimp_g]
 
 
 def the_button(animal):
-    
-    animal_settles(animal)
-
     up_button = tkinter.Button(text="up", command= lambda: move_up(animal))
     up_button.place(x=706,y=15)
 
@@ -722,38 +416,145 @@ def the_button(animal):
     right_down_button = tkinter.Button(text="right_down", command= lambda: move_right_down(animal))
     right_down_button.place(x=725,y=73)
 
+fill = turtle.Turtle()
+
+def fill_bubbles_w():
+    fill.hideturtle()
+    fill.setheading(135)
+    fill.forward(5)
+    fill.pensize(5)
+    fill.pencolor("white")
+    fill.pendown()
+    fill.circle(3)
+    fill.penup()
+    fill.setheading(150)
+    fill.forward(15)
+    fill.pendown()
+    fill.circle(10)
+    fill.penup()
+    fill.setheading(90)
+    fill.forward(20)
+    fill.pendown()
+    fill.circle(15)
+
+def fill_bubbles_g():
+    fill.penup()
+    fill.hideturtle()
+    fill.setheading(270)
+    fill.forward(40)
+    fill.pensize(5)
+    fill.pencolor("green")
+    fill.pendown()
+    fill.circle(3)
+    fill.penup()
+    fill.setheading(15)
+    fill.forward(20)
+    fill.pendown()
+    fill.circle(10)
+    fill.penup()
+    fill.setheading(65)
+    fill.forward(40)
+    fill.pendown()
+    fill.circle(15)
+
+def bubbles_draw(animal):
+    def bubbles_here(animal):
+        if len(animal.x) > 1 and len(animal.y) > 1:
+            if animal.grid[animal.x[-2]][animal.y[-2]] == BUBBLES:
+                fill.speed(50)
+                fill.penup()
+                fill.goto(grid_to_pixel(animal.x[-2]), grid_to_pixel(animal.y[-2]))
+                fill.pendown()
+    if animal in team_w:
+        bubbles_here(animal)
+        fill_bubbles_w()
+    if animal in team_g:
+        bubbles_here(animal)
+        fill_bubbles_g()
 
 
+skip = []
+allowed_to_escape = []
+
+def eaten(animal, eaten_animal):
+    if animal.turtle.pos() == eaten_animal.turtle.pos():
+        eaten_animal.turtle.hideturtle()
+        eaten_animal.grid[eaten_animal.x[-1]][eaten_animal.y[-1]] == BUBBLES
+        skip.append(eaten_animal)
+        allowed_to_escape.append(animal)
+        if eaten_animal in list_of_animals:
+            list_of_animals.remove(eaten_animal)
+        fill.penup()
+        fill.goto(eaten_animal.turtle.pos())
+        if eaten_animal in team_w:
+            team_w.remove(eaten_animal)
+            fill_bubbles_w()
+        elif eaten_animal in team_g:
+            team_g.remove(eaten_animal)
+            fill_bubbles_g()
+    elif eaten_animal in escaped:
+        allowed_to_escape.append(animal)
+    elif eaten_animal in trapped_animals:
+        allowed_to_escape.append(animal)
+
+def shrimp_w_tickles_shark_g():
+    eaten(shrimp_w, shark_g)
+
+def shark_w_eats_fish_g():
+    eaten(shark_w, fish_g)
+
+def fish_w_eats_shrimp_g():
+    eaten(fish_w, shrimp_g)
+
+def shrimp_g_tickles_shark_w():
+    eaten(shrimp_g, shark_w)
+
+def shark_g_eats_fish_w():
+    eaten(shark_g, fish_w)
+
+def fish_g_eats_shrimp_w():
+    eaten(fish_g, shrimp_w)
+
+def if_eaten():
+    shrimp_w_tickles_shark_g()
+    shark_w_eats_fish_g()
+    fish_w_eats_shrimp_g()
+    shrimp_g_tickles_shark_w()
+    shark_g_eats_fish_w()
+    fish_g_eats_shrimp_w()
+
+
+
+
+
+trapped_animals = []
+def is_trapped(animal):
+    animal.grid[animal.x[-1]][animal.y[-1]] == BUBBLES
+    trapped_animals.append(animal)
+    skip.append(animal)
+    if animal in list_of_animals:
+        list_of_animals.remove(animal)
+    
+    animal.turtle.hideturtle()
+    fill.penup()
+    fill.goto(animal.turtle.pos())
+    if animal in team_w:
+        team_w.remove(animal)
+        fill_bubbles_w()
+    elif animal in team_g:
+        team_g.remove(animal)
+        fill_bubbles_g()
+    next_go.set(1)
+
+                                                        
+
+
+list_of_animals = [shark_w, shark_g, fish_w, fish_g, shrimp_w, shrimp_g]
 
 
 next_go = tkinter.IntVar()
 next_button = tkinter.Button(text="next", command= lambda: next_go.set(1))
-next_button.place(x=300, y=50)
-next_button.config(height= 3, width= 10, bg= "yellow")
-
-
-
-def just_bubbles(animal):
-    if animal == shark_w and len(shark_w_pos) > 1 and shark_w_pos[-2] not in fill_pos:
-        one_fill_bubbles_w(animal)
-    elif animal == fish_w and len(fish_w_pos) > 1 and fish_w_pos[-2] not in fill_pos:
-        one_fill_bubbles_w(animal)
-    elif animal == shrimp_w and len(shrimp_w_pos) > 1 and shrimp_w_pos[-2] not in fill_pos:
-        one_fill_bubbles_w(animal)
-    elif animal == shark_g and len(shark_g_pos) > 1 and shark_g_pos[-2] not in fill_pos:
-        one_fill_bubbles_g(animal)
-    elif animal == fish_g and len(fish_g_pos) > 1 and fish_g_pos[-2] not in fill_pos:
-        one_fill_bubbles_g(animal)
-    elif animal == shrimp_g and len(shrimp_g_pos) > 1 and shrimp_g_pos[-2] not in fill_pos:
-        one_fill_bubbles_g(animal)
-
-
-for animal in team_w:
-    animal_settles(animal)
-    animals_positions_w.append(animal.pos())
-for animal in team_g:
-    animal_settles(animal)
-    animals_positions_g.append(animal.pos())
+next_button.place(x=300, y=75)
 
 
 def wins():
@@ -768,56 +569,53 @@ def wins():
             print("Draw!")
             tkinter.messagebox.showinfo(title= "winner", message="It's a Draw!")
 
-w_s_m1 = './white_shark_move1.gif'
-w_s_m2 = './white_shark_move2.gif'
-turtle.register_shape(w_s_m1)
-turtle.register_shape(w_s_m2)
-
-
-
-
-
-
-
-order = [shark_w, shark_g, fish_w, fish_g, shrimp_w, shrimp_g]
-def move():
-    
-    
+def go():
     while True:
-        
-         
-        
-        #order_reset()   
-        for animal in order:
-            order_reset()
-            
+        for animal in list_of_animals:
             if animal not in skip:
-                if animal == shark_w:
-                    for i in range(30):
-                        shark_w.shape(w_s_m1)
-                        shark_w.shape(w_s_m2)
-                else:
-                    shark_w.shape(white_shark)
-                
-                
+                print(f"{animal.animal_type} {animal.team} go")
                 the_button(animal)
-                cant_go_there(animal)
-                order_reset()
+                if_eaten()
+                edges_and_bubbles(animal)
                 
-            
-            
+            next_button.wait_variable(next_go)
+            wins()
 
-            trapped(animal)
+def goooo():
+    turn_w = 0
+    turn_g = 0
+    while True:
+        if len(team_w) <1:
+            print("w done")
+        else:
+            if turn_w >= len(team_w):
+                turn_w = 0
+            print(f"{team_w[turn_w].animal_type} {team_w[turn_w].team} go")
+            edges_and_bubbles(team_w[turn_w])
+            the_button(team_w[turn_w])
+        
             
             next_button.wait_variable(next_go)
-            just_bubbles(animal)
-            
+            if_eaten()
+            if turn_w < len(team_w):
+                turn_w = turn_w + (len(team_w) - (len(team_w)-1))
             wins()
+        if len(team_g) <1:
+            print("g done")
+        else:
+            if turn_g >= len(team_g):
+                turn_g = 0
+            print(f"{team_g[turn_g].animal_type} {team_g[turn_g].team} go")
+            edges_and_bubbles(team_g[turn_g])
+            the_button(team_g[turn_g])
+        
             
-            
+            next_button.wait_variable(next_go)
+            if_eaten()
+            if turn_g < len(team_g):
+                turn_g = turn_g + (len(team_g) - (len(team_g)-1))
+            wins()
 
+goooo()
 
-move()
-
-sea.listen()
 turtle.done()
