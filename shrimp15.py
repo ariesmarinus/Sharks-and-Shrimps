@@ -59,7 +59,7 @@ team_w_pencolour = "white"
 
 
 
-white_shark = './white_shark.gif'
+white_shark = r'C:/Users/aries/Desktop/codes/white_shark.gif'
 white_moving_shark = './white_moving_shark.gif'
 turtle.register_shape(white_shark)
 turtle.register_shape(white_moving_shark)
