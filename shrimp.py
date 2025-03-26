@@ -199,6 +199,7 @@ def the_move(animal, x, y):
         animal.y.append(y)
         bubbles_draw(animal)
         print_grid(animal.team)
+        edges_and_bubbles(animal)
         next_go.set(1) 
 
 def movement(animal, x, y):
