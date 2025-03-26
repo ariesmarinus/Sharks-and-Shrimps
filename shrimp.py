@@ -185,8 +185,10 @@ shrimp_g = Animal(TEAM_G, SHRIMP, green_sea_grid, shrimp_g_x, shrimp_g_y, green_
 
 def print_grid(team):
     if team == TEAM_W:
+        print("white")
         print(numpy.flip(numpy.transpose(white_sea_grid), 0))
     elif team == TEAM_G:
+        print("green")
         print(numpy.flip(numpy.transpose(green_sea_grid), 0))
     
 
