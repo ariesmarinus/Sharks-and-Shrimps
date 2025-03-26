@@ -206,6 +206,12 @@ def movement(animal, x, y):
         the_move(animal, x, y)
     if animal in allowed_to_escape:
         if x > 5 or y > 5 or x < 0 or y < 0:
+            fill.penup()
+            fill.goto(animal.turtle.pos())
+            if animal in team_w:
+                fill_bubbles_w()
+            elif animal in team_g:
+                fill_bubbles_g()
             animal.turtle.goto(grid_to_pixel(x), grid_to_pixel(y))
             escaped.append(animal)
             skip.append(animal)
@@ -221,66 +227,6 @@ def movement(animal, x, y):
         else:
             the_move(animal, x, y)
         
-def trapped_animal_trapped(animal):
-    if grid_to_pixel(animal.y[-1] + 1) > 600 or animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
-        if grid_to_pixel(animal.y[-1] - 1) < 0 or animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
-
-            if grid_to_pixel(animal.x[-1] - 1) < 0 or animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
-
-                if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] + 1) > 600) or animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
-
-                    if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] - 1) < 0) or animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
-
-                        if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] + 1) > 600) or animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
-
-                            if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] - 1) < 0) or animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
-                                is_trapped(animal)
-
-def trapped_animal_grid(animal):
-    if x < 6 and y < 6 and x >= 0 and y >= 0:
-        if animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
-            if animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
-
-                if animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
-
-                    if animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
-
-                        if animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
-
-                            if animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
-
-                                if animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
-                                    is_trapped(animal)
-
-def trapped_animal_pixel(animal):
-    if animal.x[-1] +1 < 6 and animal.y[-1] +1 < 6 and animal.x[-1]-1 >= 0 and animal.y[-1]-1 >= 0:
-        if animal.grid[animal.x[-1]][animal.y[-1] + 1] !=EMPTY:
-            if animal.grid[animal.x[-1]][animal.y[-1] - 1] !=EMPTY:
-
-                if animal.grid[animal.x[-1] - 1][animal.y[-1]] !=EMPTY:
-
-                    if animal.grid[animal.x[-1] - 1][animal.y[-1] + 1] !=EMPTY:
-
-                        if animal.grid[animal.x[-1] - 1][animal.y[-1] - 1] !=EMPTY:
-
-                            if animal.grid[animal.x[-1] + 1][animal.y[-1] + 1] !=EMPTY:
-
-                                if animal.grid[animal.x[-1] + 1][animal.y[-1] - 1] !=EMPTY:
-                                    is_trapped(animal)
-    else:
-        if grid_to_pixel(animal.y[-1] + 1) > 600:
-            if grid_to_pixel(animal.y[-1] - 1) < 0:
-
-                if grid_to_pixel(animal.x[-1] - 1) < 0:
-
-                    if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] + 1) > 600):
-
-                        if (grid_to_pixel(animal.x[-1] - 1) < 0 and grid_to_pixel(animal.y[-1] - 1) < 0):
-
-                            if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] + 1) > 600):
-
-                                if (grid_to_pixel(animal.x[-1] + 1) > 600 and grid_to_pixel(animal.y[-1] - 1) < 0):
-                                    is_trapped(animal)
 
 def edges_and_bubbles(animal):
     def no_up(animal):
@@ -330,31 +276,22 @@ def edges_and_bubbles(animal):
             
     if no_left(animal) and no_up(animal) and no_down_bubbles(animal) and no_right_down_bubbles(animal) and no_right_bubbles(animal):
         is_trapped(animal)
-        next_go.set(1)
     elif no_right(animal) and no_up(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal) and no_left_bubbles(animal):
         is_trapped(animal)
-        next_go.set(1)
     elif no_left(animal) and no_down(animal) and no_up_bubbles(animal) and no_right_up_bubbles(animal) and no_right_bubbles(animal):
         is_trapped(animal)
-        next_go.set(1)
     elif no_right(animal) and no_down(animal) and no_up_bubbles(animal) and no_left_up_bubbles(animal) and no_left_bubbles(animal):
         is_trapped(animal)
-        next_go.set(1)
     elif no_up(animal) and no_left_bubbles(animal) and no_right_bubbles(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal) and no_right_down_bubbles:
         is_trapped(animal)
-        next_go.set(1)
     elif no_left(animal) and no_up_bubbles(animal) and no_down_bubbles(animal) and no_right_bubbles(animal) and no_left_up_bubbles(animal) and no_right_down_bubbles:
         is_trapped(animal)
-        next_go.set(1)
     elif no_right(animal) and no_up_bubbles(animal) and no_down_bubbles(animal) and no_left_bubbles(animal) and no_left_up_bubbles(animal) and no_left_down_bubbles:
         is_trapped(animal)
-        next_go.set(1)
     elif no_down(animal) and no_up_bubbles(animal) and no_right_bubbles(animal) and no_left_bubbles(animal)and no_left_up_bubbles and no_right_up_bubbles:
         is_trapped(animal)
-        next_go.set(1)
     elif no_left_bubbles(animal) and no_left_up_bubbles(animal) and no_up_bubbles(animal) and no_right_up_bubbles(animal) and no_right_bubbles(animal) and no_right_down_bubbles(animal) and no_down_bubbles(animal) and no_left_down_bubbles(animal):
         is_trapped(animal)
-        next_go.set(1)
 
 
 
@@ -607,7 +544,10 @@ def goooo():
                 turn_g = 0
             print(f"{team_g[turn_g].animal_type} {team_g[turn_g].team} go")
             edges_and_bubbles(team_g[turn_g])
-            the_button(team_g[turn_g])
+            if len(team_g) > turn_g:
+                the_button(team_g[turn_g])
+            else:
+                next_go.set(1)
         
             
             next_button.wait_variable(next_go)
